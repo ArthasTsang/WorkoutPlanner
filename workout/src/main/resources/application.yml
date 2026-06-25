@@ -1,0 +1,18 @@
+---
+# spring:
+#     config:
+#         activate:
+#             on-profile: prod
+#         import: "aws-secretsmanager:/prod/mongodb/connectionString"
+
+#     mongodb:
+#         host: "${host}"
+#         port: "${port}"
+#         username: "${username}"
+#         password: "${password}"
+#         database: "${authSource}"
+
+# Clean top-level AWS block with NO background watch properties
+spring.cloud.aws:
+  secretsmanager:
+    region: ap-east-1

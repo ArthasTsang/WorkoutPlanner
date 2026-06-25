@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+    <SpringProfile name="default">
+        <!-- Configuration only for deafult -->
+        <Properties>
+            <Property name="LOG_FOLDER">C:/logs/VSCode/WorkoutPlanner/workout/</Property>
+        </Properties>
+    </SpringProfile>
+
+    <SpringProfile name="dev">
+        <!-- Configuration only for dev -->
+        <Properties>
+            <Property name="LOG_FOLDER">C:/logs/VSCode/WorkoutPlanner/workout/</Property>
+        </Properties>
+    </SpringProfile>
+
+    <SpringProfile name="prod">
+        <!-- Configuration only for prod -->
+        <Properties>
+            <!-- Reference the instance ID provided by Spring Cloud AWS -->
+            <!-- <Property name="INSTANCE_ID">${spring:aws.ec2.instance-id:-default-id}</Property> -->
+            <Property name="LOG_FOLDER">/var/log/app/</Property>
+        </Properties>
+    </SpringProfile>
+
+    <!--
+    <File name="MyFile" fileName="${LOG_PATH}">
+        <PatternLayout pattern="%d %p %c{1.} [%t] %m%n" />
+    </File>
+    -->
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" immediateFlush="true">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="RollingFile" fileName="${LOG_FOLDER}/application.log" filePattern="${LOG_FOLDER}/application-%d{MM-dd-yyyy}.log.gz" immediateFlush="true">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    
+
+    <Loggers>
+        <!--
+        <Logger name="javax.management" level="INFO" />
+        <Logger name="sun.rmi" level="INFO" />
+        -->
+        <Logger name="com.planner.workout" level="DEBUG" />
+
+        <Root level="INFO">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

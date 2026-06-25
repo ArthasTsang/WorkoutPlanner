@@ -1,0 +1,11 @@
+frontend/node_modules/
+gateway/
+auth/
+terraform-security/
+**/.gradle/
+**/.vscode/
+**/bin/
+**/build/
+**/.terraform/
+**/*.tfstate
+**/*.tfvars
