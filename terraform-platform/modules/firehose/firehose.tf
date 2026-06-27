@@ -1,5 +1,5 @@
 data "aws_s3_bucket" "log_archive_bucket" {
-  bucket = "twyat-log-mwp-log-archive-ap-east-1"
+  bucket = "twyat-log-${var.project}-${var.env}-log-archive-${var.region}"
 }
 
 data "aws_kms_alias" "s3_kms_key" {
@@ -8,7 +8,7 @@ data "aws_kms_alias" "s3_kms_key" {
 
 # IAM role for Firehose to put data to S3
 resource "aws_iam_role" "firehose_role" {
-  name = "${local.name_prefix}-central-log-firehose-s3-role"
+  name = "${local.name_prefix}-${var.region}-central-log-firehose-s3-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -23,12 +23,11 @@ resource "aws_iam_role" "firehose_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-scope-boundary-policy"
-  # permissions_boundary = "arn:aws:iam::280793169284:policy/mwp-platform-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-logging-${var.env}-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_role_policy" "firehose_s3_policy" {
-  name = "${local.name_prefix}-central-log-firehose-s3-policy"
+  name = "${local.name_prefix}-${var.region}-central-log-firehose-s3-policy"
   role = aws_iam_role.firehose_role.id
 
   policy = jsonencode({
@@ -73,7 +72,7 @@ resource "aws_kinesis_firehose_delivery_stream" "log_stream" {
     role_arn   = aws_iam_role.firehose_role.arn
     bucket_arn = data.aws_s3_bucket.log_archive_bucket.arn
     buffering_size     = 100
-    buffering_interval = 300
+    buffering_interval = 900
     compression_format = "GZIP"
     # prefix              = "${var.project}/cloudwatch-logs/account=!{partitionKeyFromQuery:account}/year=!{partitionKeyFromQuery:year}/month=!{partitionKeyFromQuery:month}/day=!{partitionKeyFromQuery:day}/"
     # error_output_prefix = "${var.project}/cloudwatch-logs-errors/year=!{timestamp:yyyy}/month=!{timestamp:MM}/day=!{timestamp:dd}/error=!{firehose:error-output-type}/"
@@ -131,7 +130,7 @@ resource "aws_kinesis_firehose_delivery_stream" "log_stream" {
 
 # IAM role for CloudWatch to put data to Firehose
 resource "aws_iam_role" "cloudwatch_to_firehose_role" {
-  name = "${local.name_prefix}-central-log-cloudwatch-to-firehose-role"
+  name = "${local.name_prefix}-${var.region}-central-log-cloudwatch-to-firehose-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -146,12 +145,11 @@ resource "aws_iam_role" "cloudwatch_to_firehose_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-scope-boundary-policy"
-  # permissions_boundary = "arn:aws:iam::280793169284:policy/mwp-platform-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-logging-${var.env}-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_role_policy" "cloudwatch_to_firehose_policy" {
-  name = "${local.name_prefix}-central-cloudwatch-to-firehose-policy"
+  name = "${local.name_prefix}-${var.region}-central-cloudwatch-to-firehose-policy"
   role = aws_iam_role.cloudwatch_to_firehose_role.id
 
   policy = jsonencode({
@@ -203,7 +201,7 @@ resource "aws_cloudwatch_log_destination_policy" "central_destination_policy" {
 
 # Share central destination ARN via SSM Parameter
 resource "aws_ssm_parameter" "shared_destination" {
-  name        = "/platform/logging/central_log_destination_arn"
+  name        = "/${var.project}/logging/${var.env}/central_log_destination_arn"
   type        = "String"
    # Must be Advanced to allow RAM sharing
   tier        = "Advanced"

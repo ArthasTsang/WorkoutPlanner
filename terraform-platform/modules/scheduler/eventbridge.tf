@@ -5,7 +5,7 @@ resource "aws_sqs_queue" "scheduler_dlq" {
 
 # Create IAM role for EventBridge Scheduler
 resource "aws_iam_role" "scheduler_role" {
-  name = "${local.name_prefix}-eventbridge-scheduler-docdb-shutdown-role"
+  name = "${local.name_prefix}-${var.region}-eventbridge-scheduler-docdb-shutdown-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -20,11 +20,11 @@ resource "aws_iam_role" "scheduler_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_policy" "scheduler_policy" {
-  name        = "${local.name_prefix}-eventbridge-scheduler-docdb-shutdown-policy"
+  name        = "${local.name_prefix}-${var.region}-eventbridge-scheduler-docdb-shutdown-policy"
   description = "Allows EventBridge Scheduler to stop DocumentDB clusters"
 
   policy = jsonencode({
@@ -48,7 +48,7 @@ resource "aws_iam_role_policy_attachment" "scheduler_attach" {
 }
 
 resource "aws_iam_policy" "scheduler_dlq_policy" {
-  name        = "${local.name_prefix}-eventbridge-scheduler-dlq-publish-policy"
+  name        = "${local.name_prefix}-${var.region}-eventbridge-scheduler-dlq-publish-policy"
   description = "Allows EventBridge Scheduler to route failed executions to SQS DLQ"
 
   policy = jsonencode({
@@ -69,7 +69,7 @@ resource "aws_iam_role_policy_attachment" "attach_dlq_policy" {
 }
 
 resource "aws_iam_policy" "scheduler_logging_policy" {
-  name        = "${local.name_prefix}-eventbridge-scheduler-logging-policy"
+  name        = "${local.name_prefix}-${var.region}-eventbridge-scheduler-logging-policy"
   description = "Allows EventBridge Scheduler to write logs to CloudWatch"
 
   policy = jsonencode({

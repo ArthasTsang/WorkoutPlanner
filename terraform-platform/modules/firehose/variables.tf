@@ -28,5 +28,5 @@ locals {
   account_alias = data.aws_iam_account_alias.current.account_alias
   account_id = data.aws_caller_identity.current.account_id
   is_prod = var.env == "prod"
-  name_prefix= "${var.project}"
+  name_prefix= "${var.project}-${var.env}"
 }

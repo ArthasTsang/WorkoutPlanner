@@ -1,6 +1,6 @@
 data "aws_ssm_parameter" "central_log_destination" {
   # ARN Format: arn:aws:ssm:<REGION>:<LOG_ACCOUNT_ID>:parameter/<NAME>
-  name = "arn:aws:ssm:${var.region}:${var.log_account_id}:parameter/platform/logging/central_log_destination_arn"
+  name = "arn:aws:ssm:${var.region}:${var.log_account_id}:parameter/${var.project}/logging/${var.env}/central_log_destination_arn"
 }
 
 # Run this inside the Dev, UAT, or Prod account root configuration

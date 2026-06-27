@@ -1,5 +1,5 @@
 data "aws_s3_bucket" "frontend" {
-  bucket = "twyat-${var.env}-mwp-frontend-${var.region}"
+  bucket = "twyat-${var.env}-${var.project}-frontend-${var.region}"
 }
 
 # resource "aws_s3_bucket" "frontend" {

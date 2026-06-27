@@ -1,3 +1,4 @@
+deploy.ps1
 frontend/node_modules/
 gateway/
 auth/
@@ -9,3 +10,4 @@ terraform-security/
 **/.terraform/
 **/*.tfstate
 **/*.tfvars
+**/backend.hcl

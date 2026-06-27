@@ -3,7 +3,7 @@ terraform {
     aws = {
       source                = "hashicorp/aws"
       version = "~> 6.0"
-      configuration_aliases = [ aws.us_east_1, aws.workload_account ]
+      configuration_aliases = [ aws.workload_account ]
     }
   }
 }

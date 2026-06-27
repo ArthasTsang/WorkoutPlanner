@@ -77,6 +77,10 @@ resource "random_password" "docdb_password" {
   override_special = "!#$%&*()-_=+[]{}<>:?" 
 }
 
+data "aws_kms_alias" "rds" {
+  name = "alias/aws/rds"
+}
+
 # DocumentDB Cluster
 resource "aws_docdb_cluster" "docdb" {
   cluster_identifier = "${local.name_prefix}-docdb-cluster"
@@ -84,7 +88,8 @@ resource "aws_docdb_cluster" "docdb" {
   master_username = "mwp"
   master_password = random_password.docdb_password.result
   storage_encrypted       = true  
-  kms_key_id          = var.kms_key_arn
+  # Use AWS managed key when no customer managed key is provided
+  kms_key_id          = var.kms_key_arn != null && var.kms_key_arn != "" ? var.kms_key_arn : data.aws_kms_alias.rds.target_key_arn
   snapshot_identifier  = var.is_create_from_snapshot ? var.snapshot_id : null
   backup_retention_period = 7
   preferred_backup_window = "17:00-18:00"
@@ -109,7 +114,7 @@ resource "aws_docdb_cluster_instance" "cluster_instances" {
 # Store the DB password and connection details in Secrets Manager
 resource "aws_secretsmanager_secret" "docdb_secret" {
   name = "/${var.project}/docdb/connectionDetails"
-  recovery_window_in_days = var.env == "prod" ? 30 : 0
+  recovery_window_in_days = var.env == "prod" ? 30 : 7
 }
 
 resource "aws_secretsmanager_secret_version" "docdb_secret_val" {
@@ -180,7 +185,7 @@ data "aws_s3_object" "rotation_zip" {
 
 # Create Lambda function role
 resource "aws_iam_role" "rotation_lambda_role" {
-  name                 = "${local.name_prefix}-docdb-rotation-lambda-role"
+  name                 = "${local.name_prefix}-${var.region}-docdb-rotation-lambda-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -197,11 +202,11 @@ resource "aws_iam_role" "rotation_lambda_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_policy" "rotation_lambda_policy" {
-  name = "${local.name_prefix}-docdb-rotation-lambda-policy"
+  name = "${local.name_prefix}-${var.region}-docdb-rotation-lambda-policy"
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

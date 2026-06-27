@@ -16,7 +16,7 @@ data "aws_iam_policy" "codedeploy_ecs" {
 
 # Service role
 resource "aws_iam_role" "cd_service_role" {
-  name = "${local.full_service_name}-codedeploy-role"
+  name = "${local.full_service_name}-${var.region}-codedeploy-role"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -37,7 +37,7 @@ resource "aws_iam_role" "cd_service_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${local.full_service_name}-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${local.full_service_name}-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_role_policy_attachment" "codedeploy_ecs_policy" {

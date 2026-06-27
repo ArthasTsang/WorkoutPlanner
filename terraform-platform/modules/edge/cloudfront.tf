@@ -106,7 +106,7 @@ resource "aws_cloudfront_distribution" "dist" {
 
 # --- Origin Access Control for S3 Security ---
 resource "aws_cloudfront_origin_access_control" "s3_oac" {
-  name                              = "s3-oac"
+  name                              = "s3-${var.region}-oac"
   description                       = "Secure S3 access from CloudFront"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
@@ -139,7 +139,7 @@ resource "aws_s3_bucket_policy" "allow_cloudfront_oac" {
 }
 
 resource "aws_cloudfront_origin_request_policy" "alb_origin_request_policy" {
-  name    = "forward-auth-and-user-id"
+  name    = "${var.region}-forward-auth-and-user-id"
   comment = "Forwards token and injected email header to the ALB origin"
 
   cookies_config {
@@ -160,7 +160,7 @@ resource "aws_cloudfront_origin_request_policy" "alb_origin_request_policy" {
 
 # CloudFront Function to rewrite WorkoutPlanner API calls
 resource "aws_cloudfront_function" "modify_api_call" {
-  name    = "ModifyWorkoutPlannerApiCall"
+  name    = "${var.region}-ModifyWorkoutPlannerApiCall"
   runtime = "cloudfront-js-2.0"
   comment = "Managed by Terraform"
   publish = true
@@ -176,7 +176,7 @@ resource "aws_cloudfront_function" "modify_api_call" {
 
 # Lambda@Edge for JWT Validation
 resource "aws_iam_role" "lambda_edge_role" {
-  name = "${local.name_prefix}-lambda-jwt-validator-role"
+  name = "${local.name_prefix}-${var.region}-lambda-jwt-validator-role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -194,7 +194,7 @@ resource "aws_iam_role" "lambda_edge_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_role_policy_attachment" "lambda_logs" {
@@ -206,13 +206,13 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 data "aws_s3_object" "jwt_validation_zip" {
   provider = aws.us_east_1
   bucket = "${local.account_alias}-${var.project}-artifact-${data.aws_region.us_east_1.region}"
-  key    = "lambda/jwtValidation.zip"
+  key    = "lambda/jwtValidation-${var.region}.zip"
 }
 
 # Lamda@Edge must be deployed in us-east-1
 resource "aws_lambda_function" "jwt_validator" {
   provider = aws.us_east_1
-  function_name = "${var.project}-cloudfront-jwt-validator"
+  function_name = "${var.project}-${var.region}-cloudfront-jwt-validator"
   role          = aws_iam_role.lambda_edge_role.arn
   handler       = "index.handler"
   runtime       = "nodejs20.x"

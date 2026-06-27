@@ -31,7 +31,7 @@ resource "aws_cloudwatch_log_group" "ecs_adot_log_group" {
 
 # ECS task execution role
 resource "aws_iam_role" "ecs_execution_role" {
-  name = "${local.full_service_name}-ecs-execution-role"
+  name = "${local.full_service_name}-${var.region}-ecs-execution-role"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -54,11 +54,11 @@ resource "aws_iam_role" "ecs_execution_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${local.full_service_name}-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${local.full_service_name}-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_role_policy" "ecs_execution_secrets_policy" {
-  name = "${local.full_service_name}-ecs-execution-policy"
+  name = "${local.full_service_name}-${var.region}-ecs-execution-policy"
   role = aws_iam_role.ecs_execution_role.id
 
   policy = jsonencode({
@@ -84,7 +84,7 @@ resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
 
 # ECS task role
 resource "aws_iam_role" "ecs_task_role" {
-  name = "${local.full_service_name}-ecs-task-role"
+  name = "${local.full_service_name}-${var.region}-ecs-task-role"
 
   assume_role_policy = jsonencode({
     "Version": "2012-10-17",
@@ -107,7 +107,7 @@ resource "aws_iam_role" "ecs_task_role" {
     ]
   })
 
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${local.full_service_name}-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${local.full_service_name}-${var.region}-scope-boundary-policy"
 }
 
 resource "aws_iam_role_policy_attachment" "task_xray" {
@@ -116,7 +116,7 @@ resource "aws_iam_role_policy_attachment" "task_xray" {
 }
 
 resource "aws_iam_role_policy" "ecs_task_policy" {
-  name = "${local.full_service_name}-ecs-task-policy"
+  name = "${local.full_service_name}-${var.region}-ecs-task-policy"
   role = aws_iam_role.ecs_task_role.id
 
   policy = jsonencode({

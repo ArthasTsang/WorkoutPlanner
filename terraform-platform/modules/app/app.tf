@@ -100,9 +100,9 @@ data "aws_ami" "amazon_linux_2023" {
 
 # Create the IAM Role for the EC2 instance
 resource "aws_iam_role" "docdb_client_role" {
-  name               = "${var.project}-docdb-client-ec2-role"
+  name               = "${var.project}-${var.region}-docdb-client-ec2-role"
   assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
-  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-scope-boundary-policy"
+  permissions_boundary = "arn:aws:iam::${local.account_id}:policy/${var.project}-platform-${var.region}-scope-boundary-policy"
 }
 
 data "aws_iam_policy_document" "ec2_assume_role" {
@@ -142,7 +142,7 @@ resource "aws_iam_role_policy" "docdb_connect_policy" {
 
 # Build the Instance Profile wrapper
 resource "aws_iam_instance_profile" "ec2_profile" {
-  name = "mwp-app-instance-profile"
+  name = "${var.project}-${var.region}-docdb-client-profile"
   role = aws_iam_role.docdb_client_role.name
 }
 
