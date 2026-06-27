@@ -1,7 +1,11 @@
-deploy.ps1
+*.ps1
+auth/
+deployment/
 frontend/node_modules/
 gateway/
-auth/
+workout/appspec.yml
+workout/deploy-revision.json
+workout/task-def.json
 **/.gradle/
 **/.vscode/
 **/bin/

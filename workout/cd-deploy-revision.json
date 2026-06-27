@@ -1,0 +1,6 @@
+{
+    "appSpecContent":  {
+                           "content":  "dmVyc2lvbjogMC4wClJlc291cmNlczoKICAtIFRhcmdldFNlcnZpY2U6CiAgICAgIFR5cGU6IEFXUzo6RUNTOjpTZXJ2aWNlCiAgICAgIFByb3BlcnRpZXM6CiAgICAgICAgVGFza0RlZmluaXRpb246IGFybjphd3M6ZWNzOmFwLWVhc3QtMTozMzQwNDQ0NzczMTI6dGFzay1kZWZpbml0aW9uL213cC1zZXJ2aWNlLXdvcmtvdXQtdGFzazo0OQogICAgICAgIExvYWRCYWxhbmNlckluZm86CiAgICAgICAgICBDb250YWluZXJOYW1lOiAibXdwLXNlcnZpY2Utd29ya291dC1jb250YWluZXIiCiAgICAgICAgICBDb250YWluZXJQb3J0OiA4MDkyCg=="
+                       },
+    "revisionType":  "AppSpecContent"
+}
