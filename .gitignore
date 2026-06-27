@@ -2,7 +2,6 @@ deploy.ps1
 frontend/node_modules/
 gateway/
 auth/
-terraform-security/
 **/.gradle/
 **/.vscode/
 **/bin/
