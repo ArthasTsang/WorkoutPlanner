@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.4'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id("org.springdoc.openapi-gradle-plugin") version "1.9.0" 
 	id 'jacoco'
 }
 
@@ -18,11 +19,11 @@ java {
 configurations {
 	all {
 		// 1. Removes the Spring starter that aggregates Logback
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-        // 2. Safely bans the specific Logback implementation JARs if brought in transitively
-        exclude group: 'ch.qos.logback', module: 'logback-classic'
-        exclude group: 'ch.qos.logback', module: 'logback-core'
-    }
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    // 2. Safely bans the specific Logback implementation JARs if brought in transitively
+    exclude group: 'ch.qos.logback', module: 'logback-classic'
+    exclude group: 'ch.qos.logback', module: 'logback-core'
+  }
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -38,31 +39,31 @@ ext {
 }
 
 sourceSets {
-    test {
-        resources {
-            srcDir file('src/test/java')
-			srcDir file('src/test/resources')
-            exclude '**/*.java'
-        }
+  test {
+    resources {
+      srcDir file('src/test/java')
+      srcDir file('src/test/resources')
+      exclude '**/*.java'
     }
+  }
 }
 
 test {
-    useJUnitPlatform()
-    systemProperty "karate.options", System.properties.getProperty("karate.options")
-    systemProperty "karate.env", System.properties.getProperty("karate.env")
-    outputs.upToDateWhen { false }
+  useJUnitPlatform()
+  systemProperty "karate.options", System.properties.getProperty("karate.options")
+  systemProperty "karate.env", System.properties.getProperty("karate.env")
+  outputs.upToDateWhen { false }
 }
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
-	// implementation 'org.springframework.boot:spring-boot-starter-opentelemetry'
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.0")
 	implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter'
 	implementation 'io.awspring.cloud:spring-cloud-aws-starter-secrets-manager:4.0.0'
-    implementation 'org.apache.logging.log4j:log4j-spring-cloud-config-client'
+  	implementation 'org.apache.logging.log4j:log4j-spring-cloud-config-client'
 	implementation 'org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0'
 	implementation 'com.google.code.gson:gson:2.13.2'
 	compileOnly 'org.projectlombok:lombok'
@@ -75,17 +76,26 @@ dependencies {
 }
 
 dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}" 
-		// mavenBom "io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom-alpha:2.12.0-alpha"
-    }
+  imports {
+    mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}" 
+  }
 }
 
 jacoco {
-    toolVersion = "0.8.14" 
+  toolVersion = "0.8.14" 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 	finalizedBy jacocoTestReport
+}
+
+openApi {
+    apiDocsUrl.set("http://localhost:8092/v3/api-docs")
+	outputDir.set(file("$buildDir/openapi"))
+    outputFileName.set("openapi.json")
+}
+
+bootRun {
+    systemProperty "server.port", "8092"
 }

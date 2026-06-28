@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 
@@ -18,6 +19,7 @@ import java.security.cert.CertificateFactory;
 
 @Configuration
 @Slf4j
+@Profile({"demo", "dev", "uat", "prod"})
 public class DocumentDbSslConfig extends AbstractMongoClientConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(DocumentDbSslConfig.class);

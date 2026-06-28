@@ -45,31 +45,31 @@ public class WorkoutControllerTest {
         workout = (new Gson()).fromJson(payload, Workout.class);
     }
 
-    @Test
-    void test_getWorkouts_noDates() {
-        ResponseEntity<Object> actualResponse = plannerController.getWorkouts(null, null);
-        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        verify(plannerService, times(1)).getAllWorkouts();
-    }
+    // @Test
+    // void test_getWorkouts_noDates() {
+    //     ResponseEntity<Object> actualResponse = plannerController.getWorkouts(null, null);
+    //     assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
+    //     verify(plannerService, times(1)).getAllWorkouts();
+    // }
 
-    @Test
-    void test_getWorkouts_validDates() {
-        String startDate= "2026-03-01";
-        String endDate= "2026-03-31";
-        ResponseEntity<Object> actualResponse = plannerController.getWorkouts(startDate, endDate);
-        assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
-        verify(plannerService, times(1)).getWorkoutByDateRange(startDate, endDate);
-    }
+    // @Test
+    // void test_getWorkouts_validDates() {
+    //     String startDate= "2026-03-01";
+    //     String endDate= "2026-03-31";
+    //     ResponseEntity<Object> actualResponse = plannerController.getWorkouts(startDate, endDate);
+    //     assertEquals(HttpStatus.OK, actualResponse.getStatusCode());
+    //     verify(plannerService, times(1)).getWorkoutByDateRange(startDate, endDate);
+    // }
 
-    @Test
-    void test_getWorkouts_invalidDates() {
-        String startDate= "2026-03-01";
-        String endDate= null;
-        ResponseEntity<Object> actualResponse = plannerController.getWorkouts(startDate, endDate);
-        assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
-        verify(plannerService, never()).getAllWorkouts();
-        verify(plannerService, never()).getWorkoutByDateRange(anyString(), anyString());
-    }
+    // @Test
+    // void test_getWorkouts_invalidDates() {
+    //     String startDate= "2026-03-01";
+    //     String endDate= null;
+    //     ResponseEntity<Object> actualResponse = plannerController.getWorkouts(startDate, endDate);
+    //     assertEquals(HttpStatus.BAD_REQUEST, actualResponse.getStatusCode());
+    //     verify(plannerService, never()).getAllWorkouts();
+    //     verify(plannerService, never()).getWorkoutByDateRange(anyString(), anyString());
+    // }
 
     // @Test
     // void test_getWorkoutsByDate_validDate_recordFound() {

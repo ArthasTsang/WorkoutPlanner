@@ -3,9 +3,7 @@ package com.karate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.servlet.context.ServletWebServerApplicationContext;
 
 import com.intuit.karate.Results;
 import com.intuit.karate.Runner;
@@ -14,8 +12,9 @@ import com.planner.workout.WorkoutApplication;
 @SpringBootTest(classes = WorkoutApplication.class, webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class FeatureTest {
 
-    @Autowired
-    private ServletWebServerApplicationContext webContext;
+    // @Autowired
+    // private ServletWebServerApplicationContext webContext;
+
 
     @Test
     void test() {

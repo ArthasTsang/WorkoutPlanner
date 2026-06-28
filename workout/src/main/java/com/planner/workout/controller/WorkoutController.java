@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 
@@ -23,6 +24,9 @@ import com.planner.workout.model.Workout;
 import com.planner.workout.repository.WorkoutRepository;
 import com.planner.workout.service.WorkoutService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +45,17 @@ public class WorkoutController {
     @Autowired
     WorkoutRepository repository;
 
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("My Workout Planner API")
+                        .version("1.0.0")
+                        .description("This is the API documentation for My Workout Planner."));
+
+    }
+    
+    @Operation(summary = "Health Check", description = "Allow health check of microservice")
     @GetMapping(value = "/planner/workout/health", produces = "application/json")
     public ResponseEntity<Object> healhCheck() {
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -49,27 +64,47 @@ public class WorkoutController {
         return new ResponseEntity<>("", responseHeaders, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/planner/workout", produces = "application/json")
-    public ResponseEntity<Object> getWorkouts(
-        @RequestParam(value = "startDate", required = false) String startDate, 
-        @RequestParam(value = "endDate", required = false) String endDate) {
-        logger.debug("PlannerController::getPlanner");
+    // @GetMapping(value = "/planner/workout", produces = "application/json")
+    // public ResponseEntity<Object> getWorkouts(
+    //     @RequestParam(value = "startDate", required = false) String startDate, 
+    //     @RequestParam(value = "endDate", required = false) String endDate) {
+    //     logger.debug("PlannerController::getPlanner");
+
+    //     HttpHeaders responseHeaders = new HttpHeaders();
+    //     responseHeaders.set("Content-Type", "application/json");
+        
+    //     Gson gson = new Gson();
+    //     if((startDate!=null && !startDate.equals("")) && (endDate!=null && !endDate.equals(""))) {
+    //         List<Workout> workouts = plannerService.getWorkoutByDateRange(startDate, endDate);
+    //         return new ResponseEntity<>(gson.toJson(workouts), responseHeaders, HttpStatus.OK);
+    //     }else if(startDate==null && endDate==null) {
+    //         List<Workout> workouts = plannerService.getAllWorkouts();
+    //         return new ResponseEntity<>(gson.toJson(workouts), responseHeaders, HttpStatus.OK);
+    //     }
+
+    //     return new ResponseEntity<>("", responseHeaders, HttpStatus.BAD_REQUEST);
+    // }
+
+    @Operation(summary = "Calendar view", description = "Getting all workouts of a customer in one calendar month for display in dashboard")
+    @GetMapping(value = "/planner/workout/calendarView", produces = "application/json")
+    public ResponseEntity<Object> getWorkoutsInCalendarView(
+        @RequestHeader("X-USER-ID") String username, 
+        @RequestParam(value = "year", required = true) String year, 
+        @RequestParam(value = "month", required = true) String month) {
+        logger.debug("PlannerController::getWorkoutsInCalendarView");
+        logger.debug("Blue/Green deployment: Blue");
+        logger.debug("Username: " + username);
+        logger.debug("Year: " + year + " Month: " + month);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Content-Type", "application/json");
-        
-        Gson gson = new Gson();
-        if((startDate!=null && !startDate.equals("")) && (endDate!=null && !endDate.equals(""))) {
-            List<Workout> workouts = plannerService.getWorkoutByDateRange(startDate, endDate);
-            return new ResponseEntity<>(gson.toJson(workouts), responseHeaders, HttpStatus.OK);
-        }else if(startDate==null && endDate==null) {
-            List<Workout> workouts = plannerService.getAllWorkouts();
-            return new ResponseEntity<>(gson.toJson(workouts), responseHeaders, HttpStatus.OK);
-        }
 
-        return new ResponseEntity<>("", responseHeaders, HttpStatus.BAD_REQUEST);
+        List<CalendarDayView> days = plannerService.getWorkoutsInCalendarView(username, year, month);
+        Gson gson = new Gson();
+        return new ResponseEntity<>(gson.toJson(days), responseHeaders, HttpStatus.OK);
     }
-    
+
+    @Operation(summary = "Get workout", description = "Get an existing workout record for customer")
     @GetMapping(value = "/planner/workout/{workoutId}", produces = "application/json")
     public ResponseEntity<Object> getWorkout(@RequestHeader("X-USER-ID") String username, @PathVariable(value = "workoutId", required = true) String workoutId) {
         logger.debug("PlannerController::getPlannerByDate");
@@ -93,25 +128,8 @@ public class WorkoutController {
             return new ResponseEntity<>("", responseHeaders, HttpStatus.NOT_FOUND);
         }
     }
-
-    @GetMapping(value = "/planner/workout/calendarView", produces = "application/json")
-    public ResponseEntity<Object> getWorkoutsInCalendarView(
-        @RequestHeader("X-USER-ID") String username, 
-        @RequestParam(value = "year", required = true) String year, 
-        @RequestParam(value = "month", required = true) String month) {
-        logger.debug("PlannerController::getWorkoutsInCalendarView");
-        logger.debug("Blue/Green deployment: Blue");
-        logger.debug("Username: " + username);
-        logger.debug("Year: " + year + " Month: " + month);
-
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("Content-Type", "application/json");
-
-        List<CalendarDayView> days = plannerService.getWorkoutsInCalendarView(username, year, month);
-        Gson gson = new Gson();
-        return new ResponseEntity<>(gson.toJson(days), responseHeaders, HttpStatus.OK);
-    }
-
+    
+    @Operation(summary = "Create workout", description = "Create a new workout record for customer")
     @PostMapping(value = "/planner/workout", produces = "application/json")
     public ResponseEntity<Object> createWorkout(@RequestHeader("X-USER-ID") String username, @RequestParam(value = "workout", required = true) String workout) {
         logger.debug("PlannerController::createPlanner");  
@@ -138,6 +156,7 @@ public class WorkoutController {
         return new ResponseEntity<>(gson.toJson(savedWorkout), responseHeaders, HttpStatus.OK);
     }
 
+    @Operation(summary = "Modify workout", description = "Modify an existing workout record for customer")
     @PutMapping(value = "/planner/workout/{id}", produces = "application/json")
     public ResponseEntity<Object> modifyWorkout(@RequestHeader("X-USER-ID") String username, @PathVariable(value = "id") String idString, @RequestParam(value = "workout", required = true) String workoutString) {
         logger.debug("PlannerController::putMethodName");
@@ -160,6 +179,7 @@ public class WorkoutController {
         }
     }
 
+    @Operation(summary = "Delete workout", description = "Delete an existing workout record for customer")
     @DeleteMapping(value = "/planner/workout/{id}", produces = "application/json")
         public ResponseEntity<Object> deleteWorkout(@RequestHeader("X-USER-ID") String username, @PathVariable(value = "id") String idString) {
         logger.debug("PlannerController::deleteWorkout");
@@ -173,6 +193,7 @@ public class WorkoutController {
         return new ResponseEntity<>("", responseHeaders, HttpStatus.OK);
     }
 
+    @Operation(summary = "Load exercises", description = "Loading all available exercises from database for customer to choose in workout pages")
     @GetMapping(value = "/planner/workout/exercise", produces = "application/json")
     public ResponseEntity<Object> getAllExercises() {
         HttpHeaders responseHeaders = new HttpHeaders();
