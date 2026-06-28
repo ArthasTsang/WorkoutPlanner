@@ -1,0 +1,345 @@
+.calendar-day-container { 
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 4px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevents large content from physically stretching the grid cell */
+    box-sizing: border-box;    /* keeps the border inside the 1fr width */
+    border: 1px solid #ccc;     
+    border-radius: 6px;           
+}
+
+.add-workout-btn {
+    display: none; /* Hidden by default */
+    position: absolute;
+    
+    /* Position at the top right */
+    top: 8px;    /* Distance from the top edge */
+    right: 8px;  /* Distance from the right edge */
+    
+    /* Remove the old centering transform */
+    transform: none; 
+
+    /* Circle Styles */
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    border: 1px solid #888;
+    border-radius: 50%;
+    
+    /* Center the + sign */
+    align-items: center;
+    justify-content: center;
+    
+    font-size: 16px;
+    color: #888;
+    font-weight: bold;
+    cursor: pointer; /* Shows hand icon only over the + */
+    z-index: 20;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* Show the button only when hovering the container */
+.calendar-day-container:hover .add-workout-btn {
+    display: flex;
+}
+
+.add-workout-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+    border-color: #333;
+}
+
+.disabled-calendar-day-container { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 4px;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; /* Prevents large content from physically stretching the grid cell */
+    box-sizing: border-box;    /* keeps the border inside the 1fr width */
+    border: 1px solid #ccc;     
+    border-radius: 6px;        
+    background-color: #f0f0f0  
+}
+
+.day-label {
+    font-family: Calibri, sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 4px
+}
+
+.workout-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px; /* Adds space between multiple workout boxes */
+    width: 100%
+}
+
+.workout-box {
+    background-color: #f0f0f0; /* Light grey background */
+    border: 1px solid #ddd;
+    border-radius: 12px;      /* Rounded corners */
+    padding: 1px 5px;        /* Space inside the box */
+    font-family: Calibri, sans-serif;
+    font-size: 12px;
+    white-space: nowrap
+}
+
+
+/* ViewWorkout.jsx */
+.workout-container {
+    position: relative;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 20px;
+    font-family: sans-serif;
+    max-width: 80vw;
+    margin: 0 auto;
+}
+
+.action-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.action-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: opacity 0.2s;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.btn-back { background-color: #6c757d; color: white; }
+.btn-modify { background-color: #ffc107; color: #212529; }
+.btn-delete { background-color: #dc3545; color: white; }
+
+.workout-title {
+    color: #333;
+    margin-bottom: 10px;
+    font-family: Calibri;
+    font-size: clamp(18px, 2vw, 24px);
+}
+
+.workout-date {
+    color: #333;
+    margin-bottom: 10px;
+    font-family: Calibri;
+    font-size: clamp(10px, 2vw, 14px);
+}
+
+.exercises-grid {
+  display: grid;
+  /* 
+     AUTO-RESPONSIVE LOGIC:
+     - Creates as many columns as possible.
+     - Columns will never be smaller than 280px.
+     - If space remains, they stretch (1fr) to fill it.
+  */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, max(200px, (100% / 3) - 15px)), 1fr));
+  gap: 15px; /* Space between columns and rows */
+  margin-top: 10px;
+}
+
+.exercise-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 5px;
+  margin-bottom: 5px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.exercise-name {
+    margin-top: 0;
+    color: #007bff;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 2px;
+    font-family: Calibri;
+    font-size: clamp(12px, 2vw, 16px);
+    font-weight: bold;
+}
+
+.sets-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5px;
+    gap: 0;
+}
+
+.set-row {
+    display: flex;
+    align-items: center;
+    padding: 2px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.set-row:last-child {
+  border-bottom: none;
+}
+
+.set-number {
+    font-family: Calibri;
+    font-size: clamp(12px, 2vw, 16px);
+    min-width: 60px;
+    color: #555;
+}
+
+.set-attributes {
+    display: flex;
+    gap: 20px;
+    font-family: Calibri;
+    font-size: clamp(12px, 2vw, 16px);
+}
+
+/* upsert workout page */
+/* Container and Header */
+.upsert-workout-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.75rem;
+  font-family: sans-serif;
+}
+
+.upsert-workout-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.upsert-workout-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+/* Exercise Cards */
+.exercise-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.exercise-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-exercise-name {
+  flex: 1;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  border-bottom: 2px solid #f3f4f6;
+  outline: none;
+  padding-bottom: 0.25rem;
+}
+
+.input-exercise-name:focus {
+  border-color: #3b82f6;
+}
+
+/* Table Styling */
+.sets-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.sets-table th {
+  background-color: #f8fafc;
+  padding: 0.5rem 1rem;
+  color: #64748b;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.sets-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  background-color: #fcfcfc;
+}
+
+/* Buttons */
+.btn-submit {
+  background-color: #2563eb;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-submit:hover { background-color: #1d4ed8; }
+
+.btn-add-exercise {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px dashed #d1d5db;
+  border-radius: 0.5rem;
+  background: none;
+  color: #6b7280;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.btn-add-exercise:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.btn-add-set {
+  margin-top: 1rem;
+  color: #2563eb;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.upsert-btn-delete {
+  border: none;
+  cursor: pointer;
+}
+
+.btn-delete:hover { color: #ef4444; }
