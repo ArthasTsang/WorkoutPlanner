@@ -8,7 +8,12 @@ output "alb_dns_name" {
     value       = aws_lb.mwp_alb[*].dns_name
 }
 
-output "ec_cluster_id" {
+output "cloudfront_origin_header" {
+    description = "Cloudfront origin header"
+    value       = random_password.cloudfront_secret.result
+}
+
+output "ecs_cluster_id" {
   description = "ECS cluster id"
   value       = aws_ecs_cluster.ecs_cluster.id
 }

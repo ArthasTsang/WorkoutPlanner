@@ -36,6 +36,11 @@ variable "alb_dns_name" {
   description = "The ALB DNS name"
 }
 
+variable "cloudfront_origin_header" {
+  type        = string
+  description = "The Cloudfront origin header"
+}
+
 variable "is_cost_saving" {
   type        = bool
   description = "Enable cost saving features"

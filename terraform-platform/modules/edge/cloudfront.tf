@@ -38,6 +38,11 @@ resource "aws_cloudfront_distribution" "dist" {
         value = "${var.env}"
       }
 
+      custom_header {
+        name  = "X-Origin-Verify"
+        value = var.cloudfront_origin_header
+      }
+
       custom_origin_config {
         http_port                = 8092
         https_port               = 443
@@ -153,7 +158,7 @@ resource "aws_cloudfront_origin_request_policy" "alb_origin_request_policy" {
   headers_config {
     header_behavior = "whitelist"
     headers {
-      items = ["Authorization", "X-User-Id", "x-deployment-test"]
+      items = ["Authorization", "X-Origin-Verify","X-User-Id", "x-deployment-test"]
     }
   }
 }

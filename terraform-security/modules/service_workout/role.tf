@@ -294,6 +294,7 @@ resource "aws_iam_policy" "terraform_ecs_policy" {
           "Effect": "Allow",
           "Action": [
             "elasticloadbalancing:CreateTargetGroup",
+            "elasticloadbalancing:ModifyTargetGroup",
             "elasticloadbalancing:DeleteTargetGroup",
             "elasticloadbalancing:ModifyTargetGroupAttributes",
             "elasticloadbalancing:CreateRule",

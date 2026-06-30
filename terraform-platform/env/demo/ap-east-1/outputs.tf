@@ -58,9 +58,9 @@ output "ecs_cluster_name" {
   value       = module.app.ecs_cluster_name
 }
 
-output "ec_cluster_id" {
+output "ecs_cluster_id" {
   description = "ECS cluster id"
-  value       = module.app.ec_cluster_id
+  value       = module.app.ecs_cluster_id
 }
 
 output "docdb_client_launch_template" {

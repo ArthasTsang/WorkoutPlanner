@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "react-scripts start",
     "start": "react-scripts start",
-    "build:demo": "set \"GENERATE_SOURCEMAP=false\" && env-cmd -f .env.demo react-scripts build",
+    "build:demo:ap-east-1": "set \"GENERATE_SOURCEMAP=false\" && env-cmd -f .env.demo.ap-east-1 react-scripts build",
+    "build:demo:ap-southeast-1": "set \"GENERATE_SOURCEMAP=false\" && env-cmd -f .env.demo.ap-southeast-1 react-scripts build",
     "build:dev": "set \"GENERATE_SOURCEMAP=false\" && env-cmd -f .env.dev react-scripts build",
     "build:uat": "set \"GENERATE_SOURCEMAP=false\" && env-cmd -f .env.uat react-scripts build",
     "build:prod": "set \"GENERATE_SOURCEMAP=false\" && env-cmd -f .env.prod react-scripts build",

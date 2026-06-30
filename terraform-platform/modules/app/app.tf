@@ -1,3 +1,8 @@
+resource "random_password" "cloudfront_secret" {
+  length  = 32
+  special = false
+}
+
 # Application Load Balancer (ALB)
 resource "aws_lb" "mwp_alb" {
   count = var.is_cost_saving ? 0 : 1
@@ -62,6 +67,17 @@ resource "aws_ssm_parameter" "shared_alb_listener_arn" {
   tier        = "Standard"
   value       = aws_lb_listener.http[0].arn
   description = "Shared ALB listener ARN"
+}
+
+# Share CloudFront custom origin verify header via SSM Parameter
+resource "aws_ssm_parameter" "shared_cloudfront_origin_header" {
+  count = var.is_cost_saving ? 0 : 1
+  
+  name        = "/platform/services/cloudfront_origin_header"
+  type        = "String"
+  tier        = "Standard"
+  value       = random_password.cloudfront_secret.result
+  description = "CloudFront custom origin verify header"
 }
 
 # Share ECS cluster values via SSM Parameter

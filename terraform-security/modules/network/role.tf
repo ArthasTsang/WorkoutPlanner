@@ -86,7 +86,7 @@ resource "aws_iam_policy" "terraform_vpc_policy" {
       "Version": "2012-10-17",
       "Statement": [
         {
-          "Sid": "TerraformVPCGlobalPermission",
+          "Sid": "TerraformVPCSearchPermission",
           "Effect": "Allow",
           "Action": [
             "ec2:DescribeVpcs",
@@ -103,6 +103,7 @@ resource "aws_iam_policy" "terraform_vpc_policy" {
             "ec2:DescribeVpcEndpoints",
             "ec2:DescribeVpcEndpointServices",
             "ec2:DescribeNetworkInterfaces",
+            "ec2:DescribeManagedPrefixLists",
             "ec2:DescribePrefixLists"
           ],
           "Resource": "*"
@@ -129,6 +130,7 @@ resource "aws_iam_policy" "terraform_vpc_policy" {
             "ec2:DeleteInternetGateway",
             "ec2:AttachInternetGateway",
             "ec2:DetachInternetGateway",
+            "ec2:GetManagedPrefixListEntries",
             "ec2:CreateTags",
             "ec2:DeleteTags"
           ],
@@ -136,7 +138,9 @@ resource "aws_iam_policy" "terraform_vpc_policy" {
             "arn:aws:ec2:${var.region}:${local.account_id}:vpc/*",
             "arn:aws:ec2:${var.region}:${local.account_id}:subnet/*",
             "arn:aws:ec2:${var.region}:${local.account_id}:route-table/*",
-            "arn:aws:ec2:${var.region}:${local.account_id}:internet-gateway/*"
+            "arn:aws:ec2:${var.region}:${local.account_id}:internet-gateway/*",
+            "arn:aws:ec2:${var.region}:${local.account_id}:aws:prefix-list/*",
+            "arn:aws:ec2:${var.region}:aws:prefix-list/*"
           ]
         },
         {
@@ -164,6 +168,7 @@ resource "aws_iam_policy" "terraform_vpc_policy" {
           "Action": [
             "ec2:CreateSecurityGroup",
             "ec2:DeleteSecurityGroup",
+            "ec2:ModifySecurityGroupRules",
             "ec2:AuthorizeSecurityGroupIngress",
             "ec2:AuthorizeSecurityGroupEgress",
             "ec2:RevokeSecurityGroupIngress",
@@ -176,7 +181,9 @@ resource "aws_iam_policy" "terraform_vpc_policy" {
           "Resource": [
             "arn:aws:ec2:${var.region}:${local.account_id}:vpc/*",
             "arn:aws:ec2:${var.region}:${local.account_id}:security-group/*",
-            "arn:aws:ec2:${var.region}:${local.account_id}:security-group-rule/*"
+            "arn:aws:ec2:${var.region}:${local.account_id}:security-group-rule/*",
+            "arn:aws:ec2:${var.region}:${local.account_id}:aws:prefix-list/*",
+            "arn:aws:ec2:${var.region}:aws:prefix-list/*"
           ]
         },
         {

@@ -38,13 +38,14 @@ resource "aws_cognito_identity_provider" "google" {
   provider_details = {
     client_id     = local.google_keys["client_id"]
     client_secret = local.google_keys["client_secret"]
-    authorize_scopes = "profile email openid"
+    # authorize_scopes = "profile email openid"
+    authorize_scopes = "email"
   }
 
   attribute_mapping = {
     email    = "email"
     username = "sub"
-    name     = "name"
+    # name     = "name"
   }
 
   lifecycle {
@@ -66,8 +67,9 @@ resource "aws_cognito_user_pool_client" "client" {
 
   allowed_oauth_flows                  = ["code", "implicit"]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_scopes                 = ["email", "openid", "profile"]
-  
+  # allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  allowed_oauth_scopes                 = ["email", "openid"]
+
   supported_identity_providers = ["Google"]
   # callback_urls = ["https://${var.cloudfront_distribution_domain_name}"]
   # logout_urls   = ["https://${var.cloudfront_distribution_domain_name}"]

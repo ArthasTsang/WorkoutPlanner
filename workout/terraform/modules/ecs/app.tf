@@ -2,6 +2,10 @@ data "aws_ssm_parameter" "alb_listener_arn" {
   name = "/platform/services/alb_listener_arn"
 }
 
+data "aws_ssm_parameter" "cloudfront_origin_header" {
+  name = "/platform/services/cloudfront_origin_header"
+}
+
 data "aws_ssm_parameter" "ecs_cluster_id" {
   name = "/platform/services/ec_cluster_id"
 }
@@ -240,149 +244,6 @@ resource "aws_ecs_task_definition" "task" {
   ])
 }
 
-# # ECS service definition
-# resource "aws_ecs_service" "service" {
-#   count        = var.is_cost_saving ? 0 : 1
-
-#   name            = "${local.full_service_name}-service"
-#   cluster         = data.aws_ssm_parameter.ecs_cluster_id.value
-#   task_definition = aws_ecs_task_definition.task.arn
-#   desired_count   = 1
-#   launch_type     = "FARGATE"
-#   health_check_grace_period_seconds = 180
-
-#   network_configuration {
-#     subnets          = data.aws_subnets.app_subnet.ids
-#     security_groups  = [data.aws_security_group.app_sg.id]
-#     assign_public_ip = false
-#   }
-
-#   load_balancer {
-#     target_group_arn = aws_lb_target_group.blue_tg.arn
-#      # Matches container name in task definition
-#     container_name   = "${local.full_service_name}-container"
-#     container_port   = 8092
-#   }
-
-#   deployment_controller {
-#     type = "CODE_DEPLOY"
-#   }
-
-#   # Link the target group to the listener BEFORE spinning up the ECS tasks
-#   depends_on = [
-#     aws_lb_listener_rule.blue_listener_rule
-#   ]
-
-#   # Prevents TF from resetting desired_count back to 1 during deployments if auto-scaling has scaled it up
-#   lifecycle {
-#     ignore_changes = [
-#       task_definition, 
-#       load_balancer, 
-#       desired_count
-#     ]
-#   }
-# }
-
-# # Auto-scaling group and policy
-# resource "aws_appautoscaling_target" "ecs_target" {
-#   count        = var.is_cost_saving ? 0 : 1
-
-#   max_capacity       = 2
-#   min_capacity       = 0
-#   resource_id        = "service/${data.aws_ssm_parameter.ecs_cluster_name.value}/${aws_ecs_service.service[0].name}"
-#   scalable_dimension = "ecs:service:DesiredCount"
-#   service_namespace  = "ecs"
-# }
-
-# resource "aws_appautoscaling_policy" "ecs_policy_cpu" {
-#   count        = var.is_cost_saving ? 0 : 1
-
-#   name               = "cpu-tracking-scaling-policy"
-#   policy_type        = "TargetTrackingScaling"
-#   resource_id        = aws_appautoscaling_target.ecs_target[0].resource_id
-#   scalable_dimension = aws_appautoscaling_target.ecs_target[0].scalable_dimension
-#   service_namespace  = aws_appautoscaling_target.ecs_target[0].service_namespace
-
-#   target_tracking_scaling_policy_configuration {
-#     target_value       = 70.0
-#     scale_in_cooldown  = 300
-#     scale_out_cooldown = 120
-
-#     predefined_metric_specification {
-#       predefined_metric_type = "ECSServiceAverageCPUUtilization"
-#     }
-#   }
-# }
-
-# # Target Group - Blue
-# resource "aws_lb_target_group" "blue_tg" {
-#   name        = "${local.full_service_name}-blue"
-#   port        = 8092
-#   protocol    = "HTTP"
-#   vpc_id      = data.aws_vpc.main.id
-#   target_type = "ip"
-
-#   health_check {
-#     enabled             = true
-#     path                = "/planner/workout/health"
-#     protocol            = "HTTP"
-#     port                = "8092"
-#     interval            = 120
-#     timeout             = 5
-#     healthy_threshold   = 2
-#     unhealthy_threshold = 5
-#   }
-
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
-
-# # Target Group - Green
-# resource "aws_lb_target_group" "green_tg" {
-#   name        = "${local.full_service_name}-green"
-#   port        = 8092
-#   protocol    = "HTTP"
-#   vpc_id      = data.aws_vpc.main.id
-#   target_type = "ip"
-
-#   health_check {
-#     enabled             = true
-#     path                = "/planner/workout/health"
-#     protocol            = "HTTP"
-#     port                = "8092"
-#     interval            = 120
-#     timeout             = 5
-#     healthy_threshold   = 2
-#     unhealthy_threshold = 5
-#   }
-
-#   lifecycle {
-#     create_before_destroy = true
-#   }
-# }
-
-# resource "aws_lb_listener_rule" "listener_rule" {
-#   count        = var.is_cost_saving ? 0 : 1
-  
-#   listener_arn = data.aws_ssm_parameter.alb_listener_arn.value
-#   priority     = 99
-
-#   action {
-#     type             = "forward"
-#     target_group_arn = aws_lb_target_group.blue_tg.arn
-#   }
-  
-#   condition {
-#     path_pattern {
-#       values = [
-#         "/planner/workout",
-#         "/planner/workout/*"
-#       ] 
-#     }
-#   }
-# }
-
 # ECS service definition
 resource "aws_ecs_service" "service" {
   count        = var.is_cost_saving ? 0 : 2
@@ -410,11 +271,6 @@ resource "aws_ecs_service" "service" {
   deployment_controller {
     type = "CODE_DEPLOY"
   }
-
-  # Link the target group to the listener BEFORE spinning up the ECS tasks
-  # depends_on = [
-  #   aws_lb_listener_rule.blue_listener_rule
-  # ]
 
   # Prevents TF from resetting desired_count back to 1 during deployments if auto-scaling has scaled it up
   lifecycle {
@@ -505,7 +361,7 @@ resource "aws_lb_target_group" "blue_tg" {
     path                = "/planner/workout/health"
     protocol            = "HTTP"
     port                = "8092"
-    interval            = 120
+    interval            = 60
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 5
@@ -531,7 +387,7 @@ resource "aws_lb_target_group" "green_tg" {
     path                = "/planner/workout/health"
     protocol            = "HTTP"
     port                = "8092"
-    interval            = 120
+    interval            = 60
     timeout             = 5
     healthy_threshold   = 2
     unhealthy_threshold = 5
@@ -551,14 +407,21 @@ resource "aws_lb_listener_rule" "public_listener_rule" {
   action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.blue_tg[0].arn
-  }
-  
+  }  
+
   condition {
     path_pattern {
       values = [
         "/planner/workout",
         "/planner/workout/*"
       ] 
+    }
+  }
+
+  condition {
+    http_header {
+      http_header_name = "X-Origin-Verify"
+      values           = [data.aws_ssm_parameter.cloudfront_origin_header.value]
     }
   }
 }
@@ -580,6 +443,13 @@ resource "aws_lb_listener_rule" "pilot_listener_rule" {
         "/planner/workout",
         "/planner/workout/*"
       ] 
+    }
+  }
+
+  condition {
+    http_header {
+      http_header_name = "X-Origin-Verify"
+      values           = [data.aws_ssm_parameter.cloudfront_origin_header.value]
     }
   }
 

@@ -25,6 +25,10 @@ import com.planner.workout.repository.WorkoutRepository;
 import com.planner.workout.service.WorkoutService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import lombok.extern.slf4j.Slf4j;
@@ -86,6 +90,16 @@ public class WorkoutController {
     // }
 
     @Operation(summary = "Calendar view", description = "Getting all workouts of a customer in one calendar month for display in dashboard")
+    @ApiResponse(
+        responseCode = "200", 
+        description = "Successfully retrieved the calendar dashboard",
+        content = @Content(
+            mediaType = "application/json",
+            array = @ArraySchema(
+                schema = @Schema(implementation = CalendarDayView.class)
+            )
+        )
+    )
     @GetMapping(value = "/planner/workout/calendarView", produces = "application/json")
     public ResponseEntity<Object> getWorkoutsInCalendarView(
         @RequestHeader("X-USER-ID") String username, 
@@ -105,6 +119,14 @@ public class WorkoutController {
     }
 
     @Operation(summary = "Get workout", description = "Get an existing workout record for customer")
+    @ApiResponse(
+        responseCode = "200", 
+        description = "Successfully retrieved the workout record",
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = Workout.class)
+        )
+    )
     @GetMapping(value = "/planner/workout/{workoutId}", produces = "application/json")
     public ResponseEntity<Object> getWorkout(@RequestHeader("X-USER-ID") String username, @PathVariable(value = "workoutId", required = true) String workoutId) {
         logger.debug("PlannerController::getPlannerByDate");
@@ -130,6 +152,14 @@ public class WorkoutController {
     }
     
     @Operation(summary = "Create workout", description = "Create a new workout record for customer")
+    @ApiResponse(
+        responseCode = "200", 
+        description = "Successfully saved the workout record",
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = Workout.class)
+        )
+    )
     @PostMapping(value = "/planner/workout", produces = "application/json")
     public ResponseEntity<Object> createWorkout(@RequestHeader("X-USER-ID") String username, @RequestParam(value = "workout", required = true) String workout) {
         logger.debug("PlannerController::createPlanner");  
@@ -157,6 +187,14 @@ public class WorkoutController {
     }
 
     @Operation(summary = "Modify workout", description = "Modify an existing workout record for customer")
+    @ApiResponse(
+        responseCode = "200", 
+        description = "Successfully modified the workout record",
+        content = @Content(
+            mediaType = "application/json",
+            schema = @Schema(implementation = Workout.class)
+        )
+    )
     @PutMapping(value = "/planner/workout/{id}", produces = "application/json")
     public ResponseEntity<Object> modifyWorkout(@RequestHeader("X-USER-ID") String username, @PathVariable(value = "id") String idString, @RequestParam(value = "workout", required = true) String workoutString) {
         logger.debug("PlannerController::putMethodName");
@@ -180,6 +218,10 @@ public class WorkoutController {
     }
 
     @Operation(summary = "Delete workout", description = "Delete an existing workout record for customer")
+    @ApiResponse(
+        responseCode = "200", 
+        description = "Successfully deleted the workout record. No response body returned."
+    )
     @DeleteMapping(value = "/planner/workout/{id}", produces = "application/json")
         public ResponseEntity<Object> deleteWorkout(@RequestHeader("X-USER-ID") String username, @PathVariable(value = "id") String idString) {
         logger.debug("PlannerController::deleteWorkout");
@@ -194,6 +236,16 @@ public class WorkoutController {
     }
 
     @Operation(summary = "Load exercises", description = "Loading all available exercises from database for customer to choose in workout pages")
+    @ApiResponse(
+        responseCode = "200", 
+        description = "Successfully loaded all exercises",
+        content = @Content(
+            mediaType = "application/json",
+            array = @ArraySchema(
+                schema = @Schema(implementation = Exercise.class)
+            )
+        )
+    )
     @GetMapping(value = "/planner/workout/exercise", produces = "application/json")
     public ResponseEntity<Object> getAllExercises() {
         HttpHeaders responseHeaders = new HttpHeaders();

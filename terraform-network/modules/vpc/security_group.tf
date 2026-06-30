@@ -1,3 +1,7 @@
+data "aws_ec2_managed_prefix_list" "cloudfront" {
+  name = "com.amazonaws.global.cloudfront.origin-facing"
+}
+
 # Default security Group
 resource "aws_default_security_group" "default" {
   vpc_id = aws_vpc.main.id
@@ -14,13 +18,32 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
+# resource "aws_vpc_security_group_ingress_rule" "alb_sg_ingress_https" {
+#   security_group_id = aws_security_group.alb_sg.id
+#   cidr_ipv4         = "0.0.0.0/0"
+#   from_port         = 8092
+#   to_port           = 8092
+#   ip_protocol       = "tcp"
+#   description       = "Allow inbound HTTPS traffic from public"
+# }
+
 resource "aws_vpc_security_group_ingress_rule" "alb_sg_ingress_https" {
   security_group_id = aws_security_group.alb_sg.id
-  cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 8092
-  to_port           = 8092
-  ip_protocol       = "tcp"
-  description       = "Allow inbound HTTPS traffic from public"
+  from_port   = 8092
+  to_port     = 8092
+  ip_protocol        = "tcp"
+  cidr_ipv4 = var.vpc_cidr
+  description = "Allow inbound HTTPS traffic from VPC CIDR"
+}
+
+# Inbound rule consuming the Managed Prefix List (Weight: 55 rules)
+resource "aws_vpc_security_group_ingress_rule" "alb_sg_ingress_cloudfront" {
+  security_group_id = aws_security_group.alb_sg.id
+  from_port       = 8092
+  to_port         = 8092
+  ip_protocol        = "tcp"
+  prefix_list_id = data.aws_ec2_managed_prefix_list.cloudfront.id
+  description       = "Allow inbound HTTPS traffic from CloudFront"
 }
 
 resource "aws_vpc_security_group_egress_rule" "alb_sg_egress_all" {
@@ -123,7 +146,7 @@ resource "aws_vpc_security_group_egress_rule" "secrets_manager_sg_egress_all" {
   description       = "Allow all outbound traffic"
 }
 
-# CloudWatch security group
+# CloudWatch Private Link security group
 resource "aws_security_group" "cloudwatch_vpce_sg" {
   name        = "${local.name_prefix}-cloudwatch-vpce-sg"
   description = "Security group for CloudWatch VPC interface endpoint"
@@ -145,6 +168,33 @@ resource "aws_vpc_security_group_ingress_rule" "cloudwatch_vpce_sg_ingress_https
   
 resource "aws_vpc_security_group_egress_rule" "cloudwatch_vpce_sg_egress_all" {
   security_group_id = aws_security_group.cloudwatch_vpce_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+  description       = "Allow all outbound traffic"
+}
+
+# ECR Private Link security group
+resource "aws_security_group" "ecr_vpce_sg" {
+  name        = "${local.name_prefix}-ecr-vpce-sg"
+  description = "Security group for ECR VPC interface endpoint"
+  vpc_id      = aws_vpc.main.id
+
+   tags = {
+    Name = "${local.name_prefix}-ecr-vpce-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "ecr_vpce_sg_ingress_https" {
+  security_group_id            = aws_security_group.ecr_vpce_sg.id
+  referenced_security_group_id = aws_security_group.app_sg.id
+  from_port                    = 443
+  to_port                      = 443
+  ip_protocol                  = "tcp"
+  description                  = "Allow inbound HTTPS traffic from app tier"
+}
+  
+resource "aws_vpc_security_group_egress_rule" "ecr_vpce_sg_egress_all" {
+  security_group_id = aws_security_group.ecr_vpce_sg.id
   cidr_ipv4         = "0.0.0.0/0"
   ip_protocol       = "-1"
   description       = "Allow all outbound traffic"
