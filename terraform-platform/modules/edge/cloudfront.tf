@@ -98,15 +98,25 @@ resource "aws_cloudfront_distribution" "dist" {
     }
   }
 
+  custom_error_response {
+    error_code            = 502
+    response_code         = 503 
+    response_page_path    = "/maintenance/index.html"
+    error_caching_min_ttl = 10
+  }
+
+  custom_error_response {
+    error_code            = 503
+    response_code         = 503
+    response_page_path    = "/maintenance/index.html"
+    error_caching_min_ttl = 10
+  }
+
   restrictions {
     geo_restriction {
       restriction_type = "none"
     }
   }
-
-  # viewer_certificate {
-  #   cloudfront_default_certificate = true
-  # }
 }
 
 # --- Origin Access Control for S3 Security ---
@@ -158,7 +168,7 @@ resource "aws_cloudfront_origin_request_policy" "alb_origin_request_policy" {
   headers_config {
     header_behavior = "whitelist"
     headers {
-      items = ["Authorization", "X-Origin-Verify","X-User-Id", "x-deployment-test"]
+      items = ["Authorization", "X-User-Id", "x-deployment-test"]
     }
   }
 }

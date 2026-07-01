@@ -25,8 +25,9 @@ resource "aws_cognito_user_pool" "pool" {
 
 # User Pool Domain
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = "${local.name_prefix}"
+  domain       = var.is_alt_domain ? var.cognito_domain_name : "${local.name_prefix}"
   user_pool_id = aws_cognito_user_pool.pool.id
+  certificate_arn = var.is_alt_domain ? var.cognito_domain_cert_arn : null
 }
 
 # Google Identity Provider
@@ -71,17 +72,17 @@ resource "aws_cognito_user_pool_client" "client" {
   allowed_oauth_scopes                 = ["email", "openid"]
 
   supported_identity_providers = ["Google"]
-  # callback_urls = ["https://${var.cloudfront_distribution_domain_name}"]
-  # logout_urls   = ["https://${var.cloudfront_distribution_domain_name}"]
-  callback_urls = concat(
-    ["https://${var.cloudfront_distribution_domain_name}"],
-    var.env == "demo" ? ["https://www.workoutplanner.fit"] : []
-  )
-  logout_urls = concat(
-    ["https://${var.cloudfront_distribution_domain_name}"],
-    var.env == "demo" ? ["https://www.workoutplanner.fit"] : []
-  )
-
+  callback_urls = ["https://${var.cloudfront_distribution_domain_name}"]
+  logout_urls   = ["https://${var.cloudfront_distribution_domain_name}"]
+  # callback_urls = concat(
+  #   ["https://${var.cloudfront_distribution_domain_name}"],
+  #   var.env == "demo" ? ["https://www.workoutplanner.fit"] : []
+  # )
+  # logout_urls = concat(
+  #   ["https://${var.cloudfront_distribution_domain_name}"],
+  #   var.env == "demo" ? ["https://www.workoutplanner.fit"] : []
+  # )
+  
   # Ensures provider is created before the client uses it
   depends_on = [aws_cognito_identity_provider.google]
 }

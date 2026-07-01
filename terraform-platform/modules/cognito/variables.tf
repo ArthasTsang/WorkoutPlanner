@@ -15,9 +15,27 @@ variable "region" {
   default     = "ap-east-1"
 }
 
+variable "is_alt_domain" {
+  type        = bool
+  description = "Enable alternative domain name"
+  default     = false
+}
+
 variable "cloudfront_distribution_domain_name" {
   type        = string
   description = "The CloudFront distribution domain name"
+}
+
+variable "cognito_domain_name" {
+  type        = string
+  description = "The domain name for the Cognito User Pool"
+  default     = ""
+}
+
+variable "cognito_domain_cert_arn" {
+  type        = string
+  description = "The ARN of the certificate for the Cognito User Pool domain"
+  default     = ""
 }
 
 variable "is_cost_saving" {

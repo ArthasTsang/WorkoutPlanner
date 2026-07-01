@@ -1,11 +1,11 @@
 output "user_pool_id" {
-    description = "The ID of the Cognito User Pool"
-    value = aws_cognito_user_pool.pool.id
+  description = "The ID of the Cognito User Pool"
+  value = aws_cognito_user_pool.pool.id
 }
 
 output "user_pool_domain" {
-    description = "The domain name of the Cognito User Pool"
-    value = aws_cognito_user_pool_domain.main.domain
+  description = "The domain name of the Cognito User Pool"
+  value = aws_cognito_user_pool_domain.main.domain
 }
 
 output "cognito_authority_url" {
@@ -14,10 +14,16 @@ output "cognito_authority_url" {
 }
 
 output "user_pool_client_id" {
-    description = "The ID of the Cognito User Pool Client"
-    value = aws_cognito_user_pool_client.client.id
+  description = "The ID of the Cognito User Pool Client"
+  value = aws_cognito_user_pool_client.client.id
 }
 
-output "dynamic_cognito_oauth_domain_url" {
+output "cognito_oauth_domain_url" {
+  description = "The Cognito Identity Provider OAuth domain URL"
   value = "https://${aws_cognito_user_pool_domain.main.domain}.auth.${var.region}.amazoncognito.com"
+}
+
+output "cognito_cloudfront_distribution" {
+  description = "Map your host registrar custom domain CNAME to this address"
+  value       = aws_cognito_user_pool_domain.main.cloudfront_distribution
 }

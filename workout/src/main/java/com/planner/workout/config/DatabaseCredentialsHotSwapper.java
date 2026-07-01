@@ -178,8 +178,8 @@ public class DatabaseCredentialsHotSwapper {
                 } catch (Exception ex) {
                     logger.error("Failed to dynamically update MongoDatabaseFactory reference pointer!", ex);
                 }
-
-
+                
+                // =========================================================================    
                 // 11. Safely close the old client to kill background topology threads
                 MongoClient oldMongoClient = this.activeMongoClient;
                 this.activeMongoClient = newMongoClient;

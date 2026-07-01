@@ -39,84 +39,7 @@ const Login = () => {
         dispatch(setUserInfo({"username": username, "jwt": jwt}));
         dispatch(setYearMonth({"year": new Date().getFullYear(), "month": new Date().getMonth()+1}));
         navigate('/planner');
-
-        // return (
-        //     <div>
-        //         <pre> Hello: {auth.user?.profile.email} </pre>
-        //         <pre> ID Token: {auth.user?.id_token} </pre>
-        //         <pre> Access Token: {auth.user?.access_token} </pre>
-        //         <pre> Refresh Token: {auth.user?.refresh_token} </pre>
-
-        //         <button onClick={() => auth.removeUser()}>Sign out</button>
-        //     </div>
-        // );
     }
-
-    // Cognito generated code
-    // return (
-    //     <div>
-    //         <button onClick={() => auth.signinRedirect()}>Sign in</button>
-    //         <button onClick={() => signOutRedirect()}>Sign out</button>
-    //     </div>
-    // );
-
-
-    // const handleChange = (e) => {
-    //     setFormData({ ...formData, [e.target.name]: e.target.value });
-    // };
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-
-    //     const bodyFormData = new FormData();
-    //     bodyFormData.append('authType', "password");
-    //     bodyFormData.append('username', formData.username);
-    //     bodyFormData.append('password', formData.password);
-
-    //     axios.post(Constants.API_URL_PREFIX+'/planner/auth', bodyFormData)
-    //         .then((response) => {
-    //             console.log("Logged in successfully");
-    //             console.log(response.data);
-    //             console.log("Username: "+response.data.username);
-    //             console.log("Jwt: "+response.data.jwt);
-    //             dispatch(setUserInfo({"username": response.data.username, "jwt": response.data.jwt}));
-    //             dispatch(setYearMonth({"year": new Date().getFullYear(), "month": new Date().getMonth()+1}));
-    //             navigate('/planner');
-    //         })
-    //         .catch(error => {
-    //             console.log("Login failed: " + error);
-    //             setErrorMessage("Invalid username or password");
-    //         });
-    // };
-
-    // const handleSuccessResponse = (googleResponse) => {
-    //     console.log(googleResponse);
-    //     console.log("Access token: " + googleResponse.credential);
-    //     // setProfile(jwtDecode(googleResponse.credential));
-
-    //     const bodyFormData = new FormData();
-    //     bodyFormData.append('authType', "google");
-    //     bodyFormData.append('token', googleResponse.credential);
-
-    //     axios.post(Constants.API_URL_PREFIX+'/planner/auth', bodyFormData)
-    //         .then((response) => {
-    //             console.log("Logged in successfully");
-    //             console.log(response.data);
-    //             console.log("Username: "+response.data.username);
-    //             console.log("Jwt: "+response.data.jwt);
-    //             dispatch(setUserInfo({"username": response.data.username, "jwt": response.data.jwt}));
-    //             dispatch(setYearMonth({"year": new Date().getFullYear(), "month": new Date().getMonth() + 1}));
-    //             navigate('/planner');
-    //         })
-    //         .catch(error => {
-    //             console.log("Login failed: " + error);
-    //             setErrorMessage("Invalid username or password");
-    //         });
-    // };
-
-    // const handleErrorResponse = (error) => {
-    //     console.log("Login failed: " + error);
-    // };
 
     // Inline styles for quick implementation
     const styles = {
@@ -162,51 +85,42 @@ const Login = () => {
             fontFamily: 'Calibri, sans-serif',
             fontSize: 'clamp(12px, 2vw, 18px)',
             fontWeight: 'bold'
+        },
+        card: {
+            backgroundColor: '#fff',
+            padding: '40px',
+            borderRadius: '12px',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
+            maxWidth: '480px',
+        },
+        icon: {
+            fontSize: '48px',
+            marginBottom: '20px',
+        },
+        h1: {
+            fontSize: '24px',
+            fontWeight: 600,
+            marginBottom: '16px',
+            color: '#222',
+            marginTop: 0,
+        },
+        p: {
+            fontSize: '16px',
+            lineHeight: 1.6,
+            color: '#555',
+            margin: 0,
         }
     };
 
     return (
         <div style={styles.container}>
             <div style={styles.formBox}>
-                {/* <form onSubmit={handleSubmit}>
-                    <h2>Workout Planner</h2>
-                    
-                    <div style={styles.inputGroup}>
-                        <label>Username</label>
-                        <input 
-                            type="text" 
-                            name="username" 
-                            style={styles.input} 
-                            onChange={handleChange} 
-                            required 
-                        />
-                    </div>
-
-                    <div style={styles.inputGroup}>
-                        <label>Password</label>
-                        <input 
-                            type="password" 
-                            name="password" 
-                            style={styles.input} 
-                            onChange={handleChange} 
-                            required 
-                        />
-                    </div>
-
-                    <div style={styles.inputGroup}>
-                        <button type="submit" style={styles.button}>Login</button>
-                    </div>
-
-                    {errorMessage != '' &&
-                    (<div style={styles.inputGroup}>
-                        <label>{errorMessage}</label>
-                    </div>)}
-                </form> */}
-
-                {/* <div style={styles.inputGroup}>
-                    <GoogleLogin onSuccess={handleSuccessResponse} onError={handleErrorResponse}  />
-                </div> */}
                 <h2>Workout Planner</h2>
+
+                <div class="{styles.card}">
+                    {/* <div class="{styles.icon}">🛠️</div> */}
+                    <p>The website is online during office hour (08:00-20:00) in Hong Kong only.</p>
+                </div>
 
                 <div style={styles.inputGroup}>
                     <button style={styles.button} onClick={() => auth.signinRedirect()}>Sign in</button>

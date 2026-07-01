@@ -74,7 +74,10 @@ module "cognito" {
   env      = var.env
   project  = var.project
   region   = var.region
-  cloudfront_distribution_domain_name = module.edge.cloudfront_distribution_domain_name
+  is_alt_domain = var.is_alt_domain
+  cloudfront_distribution_domain_name = var.is_alt_domain ? var.alt_domain_name : module.edge.cloudfront_distribution_domain_name
+  cognito_domain_name = var.cognito_domain_name
+  cognito_domain_cert_arn = var.cognito_domain_cert_arn
 }
 
 module "logging" {
