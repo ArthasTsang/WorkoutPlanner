@@ -106,7 +106,7 @@ public class WorkoutController {
         @RequestParam(value = "year", required = true) String year, 
         @RequestParam(value = "month", required = true) String month) {
         logger.debug("PlannerController::getWorkoutsInCalendarView");
-        logger.debug("Blue/Green deployment: Green");
+        logger.debug("Blue/Green deployment: Blue");
         logger.debug("Username: " + username);
         logger.debug("Year: " + year + " Month: " + month);
 
