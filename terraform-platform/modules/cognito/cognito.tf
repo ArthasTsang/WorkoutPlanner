@@ -65,8 +65,8 @@ resource "aws_cognito_identity_provider" "google" {
 resource "aws_cognito_user_pool_client" "client" {
   name         = "${local.name_prefix}-app-client"
   user_pool_id = aws_cognito_user_pool.pool.id
-
-  allowed_oauth_flows                  = ["code", "implicit"]
+  generate_secret = false
+  allowed_oauth_flows                  = ["code"]
   allowed_oauth_flows_user_pool_client = true
   # allowed_oauth_scopes                 = ["email", "openid", "profile"]
   allowed_oauth_scopes                 = ["email", "openid"]
