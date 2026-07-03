@@ -1,0 +1,7 @@
+provider_profile = <aws_profile>
+workload_account_id = <aws_account_id>
+env = <env_name>
+project = <project_name>
+service = <microservice_name>
+region = <aws_region_name>
+is_cost_saving = <boolean>

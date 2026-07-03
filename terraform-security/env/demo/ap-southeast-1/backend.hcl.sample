@@ -1,0 +1,6 @@
+region         = <aws_region_name>
+bucket         = <bucket_name>
+key            = <bucket_key>
+use_lockfile   = <boolean>
+encrypt        = <boolean>
+profile = <aws_profile>
