@@ -39,6 +39,8 @@ Click on each section below to expand the architectural blueprints and implement
 * **Key Components**: Application Load Balancers, target groups, and CodeDeploy blue/green pipelines.
 </details>
 
+## 📖 Engineering Strategy & System Design
+For a deep dive into the implementation details and alignment with the **AWS Well-Architected Framework**, read the comprehensive **[System Design Document](docs/System-design.docx)**.
 
 ## 📁 Repository Directory Structure
 | Directory | Layer | Description | Tech Stack |
