@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from "react-oidc-context";
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode'; 
@@ -8,18 +8,35 @@ import { setUserInfo, setYearMonth } from '../data/slice/PlannerDataSlice';
 import * as Constants from '../Constants';
 
 const Login = () => {
+    const [isOnline, setIsOnline] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [errorMessage, setErrorMessage] = useState('');
     const [formData, setFormData] = useState({ username: '', password: '' });
 
-    const signOutRedirect = () => {
-        const clientId = Constants.COGNITO_CLIENT_ID;
-        const logoutUri = window.location.origin;
-        const cognitoDomain = Constants.COGNITO_DOMAIN;
-        window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
-    };
+    useEffect(() => {
+         const checkTime = () => {
+            // Get current time in Hong Kong timezone
+            const hkTimeStr = new Date().toLocaleString("en-US", { timeZone: "Asia/Hong_Kong" });
+            const hkDate = new Date(hkTimeStr);
+            const hours = hkDate.getHours();
+
+            // Check if hours are between 08:00 and 19:59
+            setIsOnline(hours >= 8 && hours < 20);
+        };
+        checkTime();
+        const interval = setInterval(checkTime, 60000); // Re-check every minute
+
+        return () => clearInterval(interval);
+    }, []);
+
+    // const signOutRedirect = () => {
+    //     const clientId = Constants.COGNITO_CLIENT_ID;
+    //     const logoutUri = window.location.origin;
+    //     const cognitoDomain = Constants.COGNITO_DOMAIN;
+    //     window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
+    // };
 
     if (auth.isLoading) {
         return <div>Loading...</div>;
@@ -117,10 +134,12 @@ const Login = () => {
             <div style={styles.formBox}>
                 <h2>Workout Planner</h2>
 
-                <div class="{styles.card}">
-                    {/* <div class="{styles.icon}">🛠️</div> */}
-                    <p>The website is online during office hour (08:00-20:00) in Hong Kong only.</p>
-                </div>
+                {!isOnline &&
+                    <div class="{styles.card}">
+                        {/* <div class="{styles.icon}">🛠️</div> */}
+                        <p>The website is online during office hour (08:00-20:00) in Hong Kong only.</p>
+                    </div>
+                }
 
                 <div style={styles.inputGroup}>
                     <button style={styles.button} onClick={() => auth.signinRedirect()}>Sign in</button>

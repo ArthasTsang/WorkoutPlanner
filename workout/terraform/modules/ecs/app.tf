@@ -321,8 +321,8 @@ resource "aws_appautoscaling_scheduled_action" "ecs_stop_service" {
   service_namespace  = aws_appautoscaling_target.ecs_target[count.index].service_namespace
   resource_id        = aws_appautoscaling_target.ecs_target[count.index].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target[count.index].scalable_dimension
-  # 20:00 PM HK timezone
-  schedule           = "cron(0 12 * * ? *)"
+  # 20:05 PM HK timezone
+  schedule           = "cron(5 12 * * ? *)"
 
   scalable_target_action {
     min_capacity = 0
@@ -338,8 +338,8 @@ resource "aws_appautoscaling_scheduled_action" "ecs_start_service" {
   service_namespace  = aws_appautoscaling_target.ecs_target[count.index].service_namespace
   resource_id        = aws_appautoscaling_target.ecs_target[count.index].resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target[count.index].scalable_dimension
-  # 8:00 AM HK timezone
-  schedule           = "cron(0 0 * * ? *)" 
+  # 07:55 AM HK timezone
+  schedule           = "cron(55 23 * * ? *)" 
   scalable_target_action {
     min_capacity = 1
     max_capacity = 2
@@ -424,6 +424,10 @@ resource "aws_lb_listener_rule" "public_listener_rule" {
       values           = [data.aws_ssm_parameter.cloudfront_origin_header.value]
     }
   }
+
+  lifecycle {
+    ignore_changes = [action[0].target_group_arn]
+  }
 }
 
 resource "aws_lb_listener_rule" "pilot_listener_rule" {
@@ -458,5 +462,9 @@ resource "aws_lb_listener_rule" "pilot_listener_rule" {
       http_header_name = "x-deployment-test"
       values           = ["true"]
     }
+  }
+
+  lifecycle {
+    ignore_changes = [action[0].target_group_arn]
   }
 }

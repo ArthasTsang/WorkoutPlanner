@@ -99,7 +99,7 @@ resource "aws_scheduler_schedule" "docdb_shutdown" {
   group_name  = "default"
   description = "Triggers a shutdown of DocumentDB cluster every day at 2:00 AM HK time"
 
-  schedule_expression          = "cron(00 20 * * ? *)"
+  schedule_expression          = "cron(15 20 * * ? *)"
   schedule_expression_timezone = "Asia/Hong_Kong"
   flexible_time_window {
     # Ensures the action executes exactly without random delays
@@ -133,7 +133,7 @@ resource "aws_scheduler_schedule" "docdb_startup" {
   group_name  = "default"
   description = "Triggers a startup of DocumentDB cluster every day at 2:00 AM HK time"
 
-  schedule_expression          = "cron(00 08 * * ? *)"
+  schedule_expression          = "cron(30 07 * * ? *)"
   schedule_expression_timezone = "Asia/Hong_Kong"
   flexible_time_window {
     # Ensures the action executes exactly without random delays
