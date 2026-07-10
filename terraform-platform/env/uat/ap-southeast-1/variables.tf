@@ -79,6 +79,18 @@ variable "domain_cert_arn" {
   description = "The domain certificate ARN"
 }
 
+variable "cognito_domain_name" {
+  type        = string
+  description = "The domain name for the Cognito User Pool"
+  default     = ""
+}
+
+variable "cognito_domain_cert_arn" {
+  type        = string
+  description = "The ARN of the certificate for the Cognito User Pool domain"
+  default     = ""
+}
+
 variable "is_cost_saving" {
   type        = bool
   description = "Enable cost saving features"

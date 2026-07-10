@@ -28,7 +28,7 @@ module "scheduler" {
   region   = var.region
   docdb_cluster_arn = module.docdb.docdb.arn
   docdb_cluster_id = module.docdb.docdb.cluster_identifier
-  is_startup_required = true
+  is_startup_required = false
 }
 
 module "app" {
