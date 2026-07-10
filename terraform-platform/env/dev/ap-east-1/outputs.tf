@@ -58,9 +58,9 @@ output "ecs_cluster_name" {
   value       = module.app.ecs_cluster_name
 }
 
-output "ec_cluster_id" {
+output "ecs_cluster_id" {
   description = "ECS cluster id"
-  value       = module.app.ec_cluster_id
+  value       = module.app.ecs_cluster_id
 }
 
 output "docdb_client_launch_template" {
@@ -103,8 +103,13 @@ output "user_pool_client_id" {
     value = module.cognito.user_pool_client_id
 }
 
-output "dynamic_cognito_oauth_domain_url" {
-  value = module.cognito.dynamic_cognito_oauth_domain_url
+output "cognito_oauth_domain_url" {
+  value = module.cognito.cognito_oauth_domain_url
+}
+
+output "cognito_cloudfront_distribution" {
+  description = "Map your host registrar custom domain CNAME to this address"
+  value       = module.cognito.cognito_cloudfront_distribution
 }
 
 output "cloudwatch_log_account_policy" {

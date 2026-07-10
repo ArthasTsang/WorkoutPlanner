@@ -48,22 +48,52 @@ output "secrets_manager_vpc_endpoint_subnets" {
   value       = aws_vpc_endpoint.secrets_manager_vpce[*].subnet_ids
 }
 
-output "cloudwatch_metrics_vpc_endpoint" {
-  description = "Cloudwatch metrics vpc endpoint"
-  value       = aws_vpc_endpoint.cloudwatch_metrics[*].id
-}
+# output "cloudwatch_metrics_vpc_endpoint" {
+#   description = "Cloudwatch metrics vpc endpoint"
+#   value       = aws_vpc_endpoint.cloudwatch_metrics[*].id
+# }
 
-output "cloudwatch_metrics_vpc_endpoint_subnets" {
-  description = "Cloudwatch metrics vpc endpoint subnets"
-  value       = aws_vpc_endpoint.cloudwatch_metrics[*].subnet_ids
-}
+# output "cloudwatch_metrics_vpc_endpoint_subnets" {
+#   description = "Cloudwatch metrics vpc endpoint subnets"
+#   value       = aws_vpc_endpoint.cloudwatch_metrics[*].subnet_ids
+# }
 
 output "cloudwatch_logs_vpc_endpoint" {
   description = "Cloudwatch logs vpc endpoint"
-  value       = aws_vpc_endpoint.cloudwatch_logs[*].id
+  value       = aws_vpc_endpoint.cloudwatch_logs_vpce[*].id
 }
 
 output "cloudwatch_logs_vpc_endpoint_subnets" {
   description = "Cloudwatch logs vpc endpoint subnets"
-  value       = aws_vpc_endpoint.cloudwatch_logs[*].subnet_ids
+  value       = aws_vpc_endpoint.cloudwatch_logs_vpce[*].subnet_ids
+}
+
+output "xray_vpc_endpoint" {
+  description = "X-Ray vpc endpoint"
+  value       = aws_vpc_endpoint.xray_vpce[*].id
+}
+
+output "xray_vpc_endpoint_subnets" {
+  description = "X-Ray vpc endpoint subnets"
+  value       = aws_vpc_endpoint.xray_vpce[*].subnet_ids
+}
+
+output "ecr_dkr_vpc_endpoint" {
+  description = "ECR dkr vpc endpoint"
+  value       = aws_vpc_endpoint.ecr_dkr_vpce[*].id
+}
+
+output "ecr_dkr_vpc_endpoint_subnets" {
+  description = "ECR dkr vpc endpoint subnets"
+  value       = aws_vpc_endpoint.ecr_dkr_vpce[*].subnet_ids
+}
+
+output "ecr_api_vpc_endpoint" {
+  description = "ECR api vpc endpoint"
+  value       = aws_vpc_endpoint.ecr_api_vpce[*].id
+}
+
+output "ecr_api_vpc_endpoint_subnets" {
+  description = "ECR api vpc endpoint subnets"
+  value       = aws_vpc_endpoint.ecr_api_vpce[*].subnet_ids
 }

@@ -15,7 +15,7 @@ resource "aws_vpc_endpoint_route_table_association" "s3_gateway_endpoint_associa
   route_table_id  = aws_route_table.app_rt[count.index].id
 }
 
-# VPC Interface Endpoint to Secrets Manager
+#  Secrets Manager Endpoint
 resource "aws_vpc_endpoint" "secrets_manager_vpce" {
   count = var.is_cost_saving ? 0 : 1
 
@@ -34,25 +34,25 @@ resource "aws_vpc_endpoint" "secrets_manager_vpce" {
 }
 
 # VPC Interface Endpoint to CloudWatch Metrics
-resource "aws_vpc_endpoint" "cloudwatch_metrics" {
-  count = var.is_cost_saving ? 0 : 1
+# resource "aws_vpc_endpoint" "cloudwatch_metrics" {
+#   count = var.is_cost_saving ? 0 : 1
 
-  vpc_id            = aws_vpc.main.id
-  service_name      = "com.amazonaws.${var.region}.monitoring"
-  vpc_endpoint_type = "Interface"
-  # Associates endpoint with app subnets
-  # Associates with 1 subnet in staging for cost saving
-  subnet_ids          = local.is_prod ? local.all_app_subnets : slice(local.all_app_subnets, 0, 1)
-  security_group_ids = [aws_security_group.cloudwatch_vpce_sg.id]
-  private_dns_enabled = true
+#   vpc_id            = aws_vpc.main.id
+#   service_name      = "com.amazonaws.${var.region}.monitoring"
+#   vpc_endpoint_type = "Interface"
+#   # Associates endpoint with app subnets
+#   # Associates with 1 subnet in staging for cost saving
+#   subnet_ids          = local.is_prod ? local.all_app_subnets : slice(local.all_app_subnets, 0, 1)
+#   security_group_ids = [aws_security_group.cloudwatch_vpce_sg.id]
+#   private_dns_enabled = true
 
-  tags = {
-    Name = "${local.name_prefix}-cloudwatch-metrics-vpce"
-  }
-}
+#   tags = {
+#     Name = "${local.name_prefix}-cloudwatch-metrics-vpce"
+#   }
+# }
 
-# VPC Interface Endpoint to CloudWatch Logs
-resource "aws_vpc_endpoint" "cloudwatch_logs" {
+# CloudWatch Logs Endpoint
+resource "aws_vpc_endpoint" "cloudwatch_logs_vpce" {
   count = var.is_cost_saving ? 0 : 1
 
   vpc_id            = aws_vpc.main.id
@@ -70,27 +70,23 @@ resource "aws_vpc_endpoint" "cloudwatch_logs" {
   }
 }
 
-
-
-# 3. ECR DKR Endpoint (Required for docker pull and docker push)
-resource "aws_vpc_endpoint" "ecr_dkr_vpce" {
+# X-Ray Endpoint
+resource "aws_vpc_endpoint" "xray_vpce" {
   count = var.is_cost_saving ? 0 : 1
 
   vpc_id              = aws_vpc.main.id
-  service_name        = "com.amazonaws.${var.region}.ecr.dkr"
+  service_name        = "com.amazonaws.${var.region}.xray"
   vpc_endpoint_type   = "Interface"
-  private_dns_enabled = true
-  # Associates endpoint with app subnets
-  # Associates with 1 subnet in staging for cost saving
   subnet_ids          = local.is_prod ? local.all_app_subnets : slice(local.all_app_subnets, 0, 1)
-  security_group_ids  = [aws_security_group.ecr_vpce_sg.id]
+  security_group_ids  = [aws_security_group.xray_vpce_sg.id]
+  private_dns_enabled = true
 
   tags = {
-    Name = "${local.name_prefix}-ecr-dkr-vpce"
+    Name = "${local.name_prefix}-xray-vpce"
   }
 }
 
-# 4. ECR API Endpoint (Required for IAM authentication & ECR API actions)
+# ECR API Endpoint (Required for IAM authentication & ECR API actions)
 resource "aws_vpc_endpoint" "ecr_api_vpce" {
   count = var.is_cost_saving ? 0 : 1
 
@@ -105,5 +101,23 @@ resource "aws_vpc_endpoint" "ecr_api_vpce" {
 
   tags = {
     Name = "${local.name_prefix}-ecr-api-vpce"
+  }
+}
+
+# ECR DKR Endpoint (Required for docker pull and docker push)
+resource "aws_vpc_endpoint" "ecr_dkr_vpce" {
+  count = var.is_cost_saving ? 0 : 1
+
+  vpc_id              = aws_vpc.main.id
+  service_name        = "com.amazonaws.${var.region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  # Associates endpoint with app subnets
+  # Associates with 1 subnet in staging for cost saving
+  subnet_ids          = local.is_prod ? local.all_app_subnets : slice(local.all_app_subnets, 0, 1)
+  security_group_ids  = [aws_security_group.ecr_vpce_sg.id]
+
+  tags = {
+    Name = "${local.name_prefix}-ecr-dkr-vpce"
   }
 }

@@ -38,11 +38,6 @@ output "s3_gateway_endpoint" {
   value       = module.network.s3_gateway_endpoint
 }
 
-# output "s3_gateway_endpoint_subnets" {
-#   description = "S3 gateway endpoint subnets"
-#   value       = module.network.s3_gateway_endpoint_subnets[*]
-# }
-
 output "secrets_manager_vpc_endpoint" {
   description = "Secrets manager vpc endpoint"
   value       = module.network.secrets_manager_vpc_endpoint[*]
@@ -53,15 +48,15 @@ output "secrets_manager_vpc_endpoint_subnets" {
   value       = module.network.secrets_manager_vpc_endpoint_subnets[*]
 }
 
-output "cloudwatch_metrics_vpc_endpoint" {
-  description = "Cloudwatch metrics vpc endpoint"
-  value       = module.network.cloudwatch_metrics_vpc_endpoint[*]
-}
+# output "cloudwatch_metrics_vpc_endpoint" {
+#   description = "Cloudwatch metrics vpc endpoint"
+#   value       = module.network.cloudwatch_metrics_vpc_endpoint[*]
+# }
 
-output "cloudwatch_metrics_vpc_endpoint_subnets" {
-  description = "Cloudwatch metrics vpc endpoint subnets"
-  value       = module.network.cloudwatch_metrics_vpc_endpoint_subnets[*]
-}
+# output "cloudwatch_metrics_vpc_endpoint_subnets" {
+#   description = "Cloudwatch metrics vpc endpoint subnets"
+#   value       = module.network.cloudwatch_metrics_vpc_endpoint_subnets[*]
+# }
 
 output "cloudwatch_logs_vpc_endpoint" {
   description = "Cloudwatch logs vpc endpoint"
@@ -71,6 +66,36 @@ output "cloudwatch_logs_vpc_endpoint" {
 output "cloudwatch_logs_vpc_endpoint_subnets" {
   description = "Cloudwatch logs vpc endpoint subnets"
   value       = module.network.cloudwatch_logs_vpc_endpoint_subnets[*]
+}
+
+output "xray_vpc_endpoint" {
+  description = "X-Ray vpc endpoint"
+  value       = module.network.xray_vpc_endpoint[*]
+}
+
+output "xray_vpc_endpoint_subnets" {
+  description = "X-Ray vpc endpoint subnets"
+  value       = module.network.xray_vpc_endpoint_subnets[*]
+}
+
+output "ecr_dkr_vpc_endpoint" {
+  description = "ECR dkr vpc endpoint"
+  value       = module.network.ecr_dkr_vpc_endpoint[*]
+}
+
+output "ecr_dkr_vpc_endpoint_subnets" {
+  description = "ECR dkr vpc endpoint subnets"
+  value       = module.network.ecr_dkr_vpc_endpoint_subnets[*]
+}
+
+output "ecr_api_vpc_endpoint" {
+  description = "ECR api vpc endpoint"
+  value       = module.network.ecr_api_vpc_endpoint[*]
+}
+
+output "ecr_api_vpc_endpoint_subnets" {
+  description = "ECR api vpc endpoint subnets"
+  value       = module.network.ecr_api_vpc_endpoint_subnets[*]
 }
 
 output "subnet_share" {

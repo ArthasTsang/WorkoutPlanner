@@ -91,7 +91,7 @@ resource "aws_docdb_cluster" "docdb" {
   # Use AWS managed key when no customer managed key is provided
   kms_key_id          = var.kms_key_arn != null && var.kms_key_arn != "" ? var.kms_key_arn : data.aws_kms_alias.rds.target_key_arn
   snapshot_identifier  = var.is_create_from_snapshot ? var.snapshot_id : null
-  backup_retention_period = 7
+  backup_retention_period = 1
   preferred_backup_window = "17:00-18:00"
   deletion_protection = false
   skip_final_snapshot = true 

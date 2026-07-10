@@ -173,6 +173,33 @@ resource "aws_vpc_security_group_egress_rule" "cloudwatch_vpce_sg_egress_all" {
   description       = "Allow all outbound traffic"
 }
 
+# X-Ray Private Link security group
+resource "aws_security_group" "xray_vpce_sg" {
+  name        = "${local.name_prefix}-xray_vpce_sg-vpce-sg"
+  description = "Security group for X-Ray VPC interface endpoint"
+  vpc_id      = aws_vpc.main.id
+
+  tags = {
+    Name = "${local.name_prefix}-xray_vpce_sg-vpce-sg"
+  }
+}
+
+resource "aws_vpc_security_group_ingress_rule" "xray_vpce_sg_ingress_https" {
+  security_group_id            = aws_security_group.xray_vpce_sg.id
+  referenced_security_group_id = aws_security_group.app_sg.id
+  from_port                    = 443
+  to_port                      = 443
+  ip_protocol                  = "tcp"
+  description                  = "Allow inbound HTTPS traffic from app tier"
+}
+  
+resource "aws_vpc_security_group_egress_rule" "xray_vpce_sg_egress_all" {
+  security_group_id = aws_security_group.xray_vpce_sg.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+  description       = "Allow all outbound traffic"
+}
+
 # ECR Private Link security group
 resource "aws_security_group" "ecr_vpce_sg" {
   name        = "${local.name_prefix}-ecr-vpce-sg"
