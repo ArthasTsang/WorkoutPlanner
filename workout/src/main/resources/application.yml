@@ -15,4 +15,4 @@
 # Clean top-level AWS block with NO background watch properties
 spring.cloud.aws:
   secretsmanager:
-    region: ap-southeast-1
+    region: ap-east-1

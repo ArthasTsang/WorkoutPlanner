@@ -60,6 +60,7 @@ module "edge" {
   alt_domain_name = var.alt_domain_name
   domain_cert_arn = var.domain_cert_arn
   alb_dns_name = module.app.alb_dns_name[0]
+  cloudfront_origin_header = module.app.cloudfront_origin_header
   is_cost_saving = var.is_cost_saving
 }
 
@@ -74,6 +75,8 @@ module "cognito" {
   project  = var.project
   region   = var.region
   cloudfront_distribution_domain_name = module.edge.cloudfront_distribution_domain_name
+  cognito_domain_name = var.cognito_domain_name
+  cognito_domain_cert_arn = var.cognito_domain_cert_arn
 }
 
 module "logging" {
