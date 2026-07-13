@@ -254,6 +254,8 @@ resource "aws_ecs_service" "service" {
   desired_count   = 1
   launch_type     = "FARGATE"
   health_check_grace_period_seconds = 180
+  enable_ecs_managed_tags = true
+  propagate_tags  = "SERVICE"
 
   network_configuration {
     subnets          = data.aws_subnets.app_subnet.ids

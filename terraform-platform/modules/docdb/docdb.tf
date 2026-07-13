@@ -292,6 +292,11 @@ resource "aws_lambda_permission" "allow_secrets_manager" {
   principal     = "secretsmanager.amazonaws.com"
 }
 
+resource "aws_cloudwatch_log_group" "db_rotator_log_group" {
+  name              = "/aws/lambda/${local.name_prefix}-docdb-rotation-lambda"
+  retention_in_days = 30
+}
+
 resource "aws_secretsmanager_secret_rotation" "docdb_rotation" {
   secret_id           = aws_secretsmanager_secret.docdb_secret.id
   rotation_lambda_arn = aws_lambda_function.db_rotator.arn

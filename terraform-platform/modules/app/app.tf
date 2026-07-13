@@ -58,6 +58,11 @@ resource "aws_ecs_cluster" "ecs_cluster" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "ecs_container_insights" {
+  name              = "/aws/ecs/containerinsights/${local.name_prefix}-cluster/performance"
+  retention_in_days = 7
+}
+
 # Share ALB listener ARN via SSM Parameter
 resource "aws_ssm_parameter" "shared_alb_listener_arn" {
   count = var.is_cost_saving ? 0 : 1

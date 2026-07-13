@@ -881,7 +881,8 @@ resource "aws_iam_policy" "terraform_logging_policy" {
             "logs:PutAccountPolicy",
             "logs:DeleteAccountPolicy",
             "logs:DescribeAccountPolicies",
-            "logs:DescribeLogGroups"
+            "logs:DescribeLogGroups",
+            "logs:ListTagsForResource"
           ],
           "Resource": "*"
         },
@@ -889,10 +890,12 @@ resource "aws_iam_policy" "terraform_logging_policy" {
           "Sid": "TerraformCloudWatchPermission",
           "Effect": "Allow",
           "Action": [
+            "logs:PutRetentionPolicy",
             "logs:PutSubscriptionFilter",
             "logs:DeleteSubscriptionFilter",
             "logs:DescribeSubscriptionFilters",
-            "logs:DescribeLogStreams"
+            "logs:DescribeLogStreams",
+            "logs:TagResource"
           ],
           "Resource": [
             "arn:aws:logs:${var.region}:${local.account_id}:*:*"
